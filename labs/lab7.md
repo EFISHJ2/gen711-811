@@ -108,7 +108,6 @@ Based on the metadata, can you answer the following questions?
 
 - Explain how a FASTQ file encodes per-base quality scores.
 - Interpret a FastQC plot summarizing per-base quality across all reads.
-- Use `for` loops to automate operations on multiple files.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -139,7 +138,7 @@ description of each step.
 mkdir -p ~/gen711-811/data/untrimmed_fastq/
 cd ~/gen711-811/data/untrimmed_fastq
 ```
-Download the files
+Download the files (do not use unless instructed.See faster option)
 ```
 curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/004/SRR2589044/SRR2589044_1.fastq.gz
 curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/004/SRR2589044/SRR2589044_2.fastq.gz
@@ -178,7 +177,6 @@ Download the html files to view them.
 
 - Clean FASTQ reads using Trimmomatic.
 - Select and set multiple options for command-line bioinformatic tools.
-- Write `for` loops with two variables.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -300,6 +298,8 @@ We are going to run Trimmomatic on one of our paired-end samples.
 While using FastQC we saw that Nextera adapters were present in our samples.
 The adapter sequences came with the installation of trimmomatic, so we will first copy these sequences into our current directory.
 
+### NOTE: This next step will proably not work. Think about using the 'which' command and see if you can find out where these adaptors are
+
 ```bash
 $ cp ~/.miniconda3/pkgs/trimmomatic-0.38-0/share/trimmomatic-0.38-0/adapters/NexteraPE-PE.fa .
 ```
@@ -393,14 +393,14 @@ gzip SRR2584863_1.fastq
 ```
 
 ```bash
-$ for infile in *_1.fastq.gz
-> do
->   base=$(basename ${infile} _1.fastq.gz)
->   trimmomatic PE ${infile} ${base}_2.fastq.gz \
->                ${base}_1.trim.fastq.gz ${base}_1un.trim.fastq.gz \
->                ${base}_2.trim.fastq.gz ${base}_2un.trim.fastq.gz \
->                SLIDINGWINDOW:4:20 MINLEN:25 ILLUMINACLIP:NexteraPE-PE.fa:2:40:15 
-> done
+for infile in *_1.fastq.gz
+do
+  base=$(basename ${infile} _1.fastq.gz)
+  trimmomatic PE ${infile} ${base}_2.fastq.gz \
+               ${base}_1.trim.fastq.gz ${base}_1un.trim.fastq.gz \
+               ${base}_2.trim.fastq.gz ${base}_2un.trim.fastq.gz \
+               SLIDINGWINDOW:4:20 MINLEN:25 ILLUMINACLIP:NexteraPE-PE.fa:2:40:15 
+done
 ```
 
 Go ahead and run the for loop. It should take a few minutes for
